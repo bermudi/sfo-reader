@@ -1,7 +1,7 @@
 import logging
 
 def read_sfo_data(filename):
-    logging.info(f"Reading data from {filename}")
+    logging.debug(f"Reading data from {filename}")
     with open(filename, 'rb') as file:
         magic = file.read(4)
         if magic != b'\x00PSF':
@@ -36,4 +36,3 @@ def read_sfo_data(filename):
             logging.debug(f"Extracted {key}: {data_value}")
         
         return sfo_data
-
