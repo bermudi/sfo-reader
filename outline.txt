@@ -52,36 +52,36 @@ Scalability: Designed to handle multiple game directories under a given library 
 
 
 ```
-                  Start
-                    │
-                    ▼
-          Parse Command-Line Arguments
-                    │
-                    ▼
+                        Start
+                          │
+                          ▼
+             Parse Command-Line Arguments
+                          │
+                          ▼
        Is a path specified on the command line?
-                 /       \
-              Yes          No
-               │            │
-               ▼            ▼
-    Treat path as     Assume current directory
-    library root      is game root directory
-       (root of           │
-    multiple games)       ▼
-        │            Look for `sce_sys/param.sfo`
-        │                in the current directory
-        │                       │
-        ▼                       ▼
-Iterate over directories       Print contents of `param.sfo`
-    in the path                │
-        │                      ▼
-        ▼                Is `--txt-paramsfo` specified?
-    For each directory:          │
-        │                       Yes
-        ▼                        ▼
-    Check if directory   Generate a text file in the current
-    is a valid game root   directory listing `param.sfo` contents
-        │                         │
-        ▼                         ▼
+                 /                 \
+              Yes                   No
+               │                     │
+               ▼                     ▼
+    Treat path as                Assume current directory
+    library root                 is game root directory
+       (root of                               │
+    multiple games)                           ▼
+        │                        Look for `sce_sys/param.sfo`
+        │                        in the current directory
+        │                                     │
+        ▼                                     ▼
+    Iterate over directories     Print contents of `param.sfo`
+    in the path                               │
+        │                                     ▼
+        ▼                        Is `--txt-paramsfo` specified?
+    For each directory:                       │
+        │                                    Yes
+        ▼                                     ▼
+    Check if directory           Generate a text file in the current
+    is a valid game root         directory listing `param.sfo` contents
+        │                                     │
+        ▼                                     ▼
     Is `--organize` specified?   (End of processing)
         │
         Yes
