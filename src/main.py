@@ -5,9 +5,6 @@ import os
 import logging
 from dir_ops import process_game_root, process_library_root, organize_games, generate_text_file
 
-args.organize = False
-args.txt_paramsfo = False
-
 def parse_args():
     parser = argparse.ArgumentParser(description="Process and organize game directories.")
     parser.add_argument('--organize', action='store_true', help='Organize games into folders named after their STITLE.')
@@ -24,8 +21,8 @@ def main():
         logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
         
     if args.path:
-        if args.organize or args.txt_paramsfo:
-            organize_games(args.path, args.organize, args.txt_paramsfo)
+        if args.organize:
+            organize_games(args.path, args.txt_paramsfo)
         else:
             process_library_root(args.path, args.txt_paramsfo)
     else:

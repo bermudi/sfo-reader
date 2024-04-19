@@ -72,7 +72,7 @@ def is_valid_game_directory(root):
     logging.debug(f"{os.path.abspath(root)} doesn't seem to be a valid game directory.")
     return False, False, False
 
-def organize_games(directory, organize=False, create_txt=False):
+def organize_games(directory, create_txt=False):
     # Predefine paths for games and homebrew
     games_dir = os.path.join(directory, "Games")
     homebrew_dir = os.path.join(directory, "Homebrew")
