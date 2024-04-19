@@ -10,7 +10,9 @@ TITLE: The official title of the game.
 STITLE: A shorter or simplified title.
 PUBTOOLINFO: Publisher information (presence indicates a game, absence typically indicates homebrew).
 Other information like version, category, and region.
-Game Directory Structure
+
+# Game Directory Structure
+
 Game directories typically have the following structure:
 
 ```
@@ -31,8 +33,8 @@ The script checks for the presence of eboot.bin and sce_sys/param.sfo to validat
 The script supports several command-line options to specify its behavior:
 
 * No parameters: Assumes the current directory is the root of a game, and looks directly for sce_sys/param.sfo within it to print its contents.
-* --organize: Organizes all found game directories under the library root into new directories named after their STITLE values from param.sfo.
-* --txt-paramsfo: Generates a text file in the root of each game directory that lists all the metadata found in the param.sfo file.
+* `--organize`: Organizes all found game directories under the library root into new directories named after their STITLE values from param.sfo.
+* `--txt-paramsfo`: Generates a text file in the root of each game directory that lists all the metadata found in the param.sfo file.
 * path: Optional; Treats the given path as the library root containing multiple game directories and performs operations on each valid game directory found. If not provided, the current directory is assumed to be the root of a game directory.
 
 # Program Flow and Functions
@@ -52,15 +54,15 @@ Scalability: Designed to handle multiple game directories under a given library 
 ```
                   Start
                     │
-                                ▼
+                    ▼
           Parse Command-Line Arguments
                     │
-                                ▼
+                    ▼
        Is a path specified on the command line?
                  /       \
               Yes          No
                │            │
-                        ▼                  ▼
+               ▼            ▼
     Treat path as     Assume current directory
     library root      is game root directory
        (root of           │
@@ -68,34 +70,34 @@ Scalability: Designed to handle multiple game directories under a given library 
         │            Look for `sce_sys/param.sfo`
         │                in the current directory
         │                       │
-            ▼                                   ▼
+        ▼                       ▼
 Iterate over directories       Print contents of `param.sfo`
     in the path                │
         │                      ▼
-            ▼                Is `--txt-paramsfo` specified?
+        ▼                Is `--txt-paramsfo` specified?
     For each directory:          │
         │                       Yes
-            ▼                                       ▼
+        ▼                        ▼
     Check if directory   Generate a text file in the current
     is a valid game root   directory listing `param.sfo` contents
         │                         │
-            ▼                                       ▼
+        ▼                         ▼
     Is `--organize` specified?   (End of processing)
         │
         Yes
-            ▼
+        ▼
     Organize games into directories
     named after `STITLE` from `param.sfo`
         │
-            ▼
+        ▼
     Is `--txt-paramsfo` specified?
         │
         Yes
-            ▼
+        ▼
     Generate a text file in the root
     directory listing `param.sfo` contents
         │
-            ▼
+        ▼
     (End of processing)
 ```
 
@@ -110,8 +112,9 @@ Operations Based on Flags:
 Organizing: If --organize is flagged, directories are restructured based on STITLE.
 Text File Generation: The --txt-paramsfo flag triggers the creation of text files summarizing param.sfo contents, applicable in both scenarios of path specified or not.
 
-expected unorganized structure for library directory:
+Expected unorganized structure for library directory:
 
+```
 library_root/
 │
 ├── PCSA00029/                    # Game A
@@ -128,11 +131,11 @@ library_root/
       │   └── param.sfo
       ├── sce_pfs/
       └── eboot.bin
+```
 
+Expected result after orginizing library:
 
-expected result after orginizing library
-
-
+```
 library_root/
 │
 ├── Games
@@ -155,5 +158,4 @@ library_root/
             ├── sce_sys/
             │   └── param.sfo
             └── eboot.bin
-
-It is very important to respect the internal structure of the game directory 
+```
