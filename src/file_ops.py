@@ -36,3 +36,10 @@ def read_sfo_data(filename):
             logging.debug(f"Extracted {key}: {data_value}")
         
         return sfo_data
+
+def generate_text_file(txt_path, sfo_data):
+    """ Generates a text file with 'param.sfo' contents at the game directory level. """
+    with open(txt_path, 'w') as txt_file:
+        for key, value in sfo_data.items():
+            txt_file.write(f"{key}: {value}\n")
+    logging.debug(f"Generated text file at {txt_path}")

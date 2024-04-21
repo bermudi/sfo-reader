@@ -1,7 +1,7 @@
 import os
 import shutil
 import logging
-from file_ops import read_sfo_data
+import file_ops as fo
 
 
 def process_game_root(directory, create_txt=False):
@@ -15,7 +15,7 @@ def process_game_root(directory, create_txt=False):
         print(f"Detected as: {dir_type}")
         if create_txt:
                 txt_path = os.path.join(directory, f"{stitle}.txt")
-                generate_text_file(txt_path, sfo_data)
+                fo.generate_text_file(txt_path, sfo_data)
     else:
         print("Error: 'sce_sys/param.sfo' and 'eboot.bin' not found in the current directory.")
 
@@ -39,7 +39,7 @@ def process_library_root(directory, create_txt=False):
                 # homebrew_count += 1
             if create_txt:
                 txt_path = os.path.join(root, f"{stitle}.txt")
-                generate_text_file(txt_path, sfo_data)
+                fo.generate_text_file(txt_path, sfo_data)
     sep = '\n'
     if len(game_titles) >= 1:
         print("Games found:\n")
@@ -63,7 +63,7 @@ def is_valid_game_directory(root):
     logging.debug(f"checking eboot_path: {eboot_path}")
     if os.path.exists(sfo_path) and os.path.exists(eboot_path):
         is_valid = True
-        sfo_data = read_sfo_data(sfo_path)
+        sfo_data = fo.read_sfo_data(sfo_path)
         stitle = sfo_data.get('STITLE')
         logging.debug(f"Found {stitle} in {root}")
         if os.path.exists(os.path.join(root,'sce_pfs')) and 'PUBTOOLINFO' in sfo_data:
@@ -95,6 +95,9 @@ def organize_games(directory, create_txt=False):
 
     # Walk through each directory in the library root
     for root, dirs, files in os.walk(directory, topdown=False):
+        if games_dir in root or homebrew_dir in root:
+            logging.debug(f"Skipping directories inside {games_dir} and {homebrew_dir}...")
+            continue
         is_valid, dir_type, sfo_data = is_valid_game_directory(root)
         if is_valid:
                 stitle = sfo_data.get('STITLE', 'Unknown').replace('/', '_')
@@ -120,12 +123,4 @@ def organize_games(directory, create_txt=False):
                 # Create a text file summarizing param.sfo contents if required
                 if create_txt:
                     txt_path = os.path.join(new_game_dir, f"{stitle}.txt")
-                    generate_text_file(txt_path, sfo_data)
-                
-
-def generate_text_file(txt_path, sfo_data):
-    """ Generates a text file with 'param.sfo' contents at the game directory level. """
-    with open(txt_path, 'w') as txt_file:
-        for key, value in sfo_data.items():
-            txt_file.write(f"{key}: {value}\n")
-    logging.debug(f"Generated text file at {txt_path}")
+                    fo.generate_text_file(txt_path, sfo_data)

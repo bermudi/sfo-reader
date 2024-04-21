@@ -3,7 +3,7 @@
 import argparse
 import os
 import logging
-from dir_ops import process_game_root, process_library_root, organize_games, generate_text_file
+import dir_ops as do 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Process and organize game directories.")
@@ -22,11 +22,11 @@ def main():
         
     if args.path:
         if args.organize:
-            organize_games(args.path, args.txt_paramsfo)
+            do.organize_games(args.path, args.txt_paramsfo)
         else:
-            process_library_root(args.path, args.txt_paramsfo)
+            do.process_library_root(args.path, args.txt_paramsfo)
     else:
-        process_game_root('.', args.txt_paramsfo)
+        do.process_game_root('.', args.txt_paramsfo)
 
 if __name__ == '__main__':
     main()
