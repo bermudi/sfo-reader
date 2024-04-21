@@ -101,6 +101,7 @@ def organize_games(directory, create_txt=False):
         is_valid, dir_type, sfo_data = is_valid_game_directory(root)
         if is_valid:
                 stitle = sfo_data.get('STITLE', 'Unknown').replace('/', '_')
+                title_id = sfo_data.get('TITLE_ID')
                 if dir_type == 'game':
                     target_dir = os.path.join(games_dir, stitle)
                     logging.debug(f"New Target Directory: {target_dir}")
@@ -113,11 +114,11 @@ def organize_games(directory, create_txt=False):
                     logging.debug(f"Created Target Directory: {target_dir}")
                 
                 # Move the entire game directory to the new location
-                new_game_dir = os.path.join(target_dir, os.path.basename(root))
+                new_game_dir = os.path.join(target_dir, title_id)
                 logging.debug(f"new_game_dir: {new_game_dir}")
                 if os.path.exists(new_game_dir):
                     raise FileExistsError("There is something at the target directory")
-                shutil.move(root, target_dir)
+                shutil.move(root, new_game_dir)
                 logging.debug(f"Moved: {root} to new location: {target_dir}")
 
                 # Create a text file summarizing param.sfo contents if required
