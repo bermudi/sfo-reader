@@ -2,6 +2,7 @@ import os
 import shutil
 import logging
 import file_ops as fo
+from utils import cleanup_title
 
 
 def process_game_root(directory, create_txt=False):
@@ -10,11 +11,11 @@ def process_game_root(directory, create_txt=False):
     if is_valid:
         for key, value in sfo_data.items():
             print(f"{key}: {value}")
-        stitle = sfo_data.get('STITLE', 'Unknown').replace('/', '_')
-        print(f"\n\nTitle: {stitle}")
+        title = cleanup_title(sfo_data.get('TITLE'))
+        print(f"\n\nTitle: {title}")
         print(f"Detected as: {dir_type}")
         if create_txt:
-                txt_path = os.path.join(directory, f"{stitle}.txt")
+                txt_path = os.path.join(directory, f"{title}.txt")
                 fo.generate_text_file(txt_path, sfo_data)
     else:
         print("Error: 'sce_sys/param.sfo' and 'eboot.bin' not found in the current directory.")
@@ -29,16 +30,15 @@ def process_library_root(directory, create_txt=False):
     for root, dirs, files in os.walk(directory):
         is_valid, dir_type, sfo_data = is_valid_game_directory(root)
         if is_valid:
-            stitle = sfo_data.get('STITLE')
-            # logging.debug(f"Found {dir_type} {stitle} at {root}")
+            title = cleanup_title(sfo_data.get('TITLE'))
             if dir_type == 'game':
-                game_titles.append(stitle)
+                game_titles.append(title)
                 # game_count += 1
             elif dir_type == 'homebrew':
-                homebrew_titles.append(stitle)
+                homebrew_titles.append(title)
                 # homebrew_count += 1
             if create_txt:
-                txt_path = os.path.join(root, f"{stitle}.txt")
+                txt_path = os.path.join(root, f"{title}.txt")
                 fo.generate_text_file(txt_path, sfo_data)
     sep = '\n'
     if len(game_titles) >= 1:
@@ -48,8 +48,11 @@ def process_library_root(directory, create_txt=False):
     if len(homebrew_titles) >= 1:
         print("Homebrews found:\n")
         print(f"{sep.join(homebrew_titles)}")
-    print("\nSummary:")
-    print(f"Games: {len(game_titles)}, Homebrews: {len(homebrew_titles)}")
+    if len(game_titles) == 0 and len(homebrew_titles) == 0:
+        print(f"Couldn't find any games in {os.path.abspath(directory)}")
+    else:
+        print("\nSummary:")
+        print(f"Games: {len(game_titles)}, Homebrews: {len(homebrew_titles)}")
 
 def is_valid_game_directory(root):
     """ Check if the directory contains valid game or homebrew structure.
@@ -64,8 +67,8 @@ def is_valid_game_directory(root):
     if os.path.exists(sfo_path) and os.path.exists(eboot_path):
         is_valid = True
         sfo_data = fo.read_sfo_data(sfo_path)
-        stitle = sfo_data.get('STITLE')
-        logging.debug(f"Found {stitle} in {root}")
+        title = cleanup_title(sfo_data.get('TITLE'))
+        logging.debug(f"Found {title} in {root}")
         if os.path.exists(os.path.join(root,'sce_pfs')) and 'PUBTOOLINFO' in sfo_data:
             dir_type = 'game'
             logging.debug(f"{root} detected as `game`")
@@ -100,13 +103,13 @@ def organize_games(directory, create_txt=False):
             continue
         is_valid, dir_type, sfo_data = is_valid_game_directory(root)
         if is_valid:
-                stitle = sfo_data.get('STITLE', 'Unknown').replace('/', '_')
+                title = cleanup_title(sfo_data.get('TITLE'))
                 title_id = sfo_data.get('TITLE_ID')
                 if dir_type == 'game':
-                    target_dir = os.path.join(games_dir, stitle)
+                    target_dir = os.path.join(games_dir, title)
                     logging.debug(f"New Target Directory: {target_dir}")
                 elif dir_type == 'homebrew':
-                    target_dir = os.path.join(homebrew_dir, stitle)
+                    target_dir = os.path.join(homebrew_dir, title)
                     logging.debug(f"New Target Directory: {target_dir}")
                 # Ensure the target directory exists
                 if not os.path.exists(target_dir):
@@ -123,5 +126,5 @@ def organize_games(directory, create_txt=False):
 
                 # Create a text file summarizing param.sfo contents if required
                 if create_txt:
-                    txt_path = os.path.join(new_game_dir, f"{stitle}.txt")
+                    txt_path = os.path.join(new_game_dir, f"{title}.txt")
                     fo.generate_text_file(txt_path, sfo_data)
